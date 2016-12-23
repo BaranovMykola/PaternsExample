@@ -55,12 +55,8 @@ void main()
 		main->add(move(sub2));
 		main->show();
 		cout << endl;
-/*		for (auto i : (*main))
-		{
-			i.show();
-			cout << endl;
-		}*/
-		//auto it = main->begin();
+		auto it = find_if(IteratorComposit(main.get()), IteratorComposit(nullptr), [](Leaf val) { return val.name() == "sub21"; });
+		(*it).show();
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))

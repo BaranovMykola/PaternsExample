@@ -55,11 +55,12 @@ public:
 	{
 		cout << mName << endl;
 	}
+	string name()const { return mName; }
 private:
 	string mName;
 };
 
-class IteratorComposit
+class IteratorComposit : public iterator<input_iterator_tag, Leaf>
 {
 public:
 	IteratorComposit(Composit* root)
@@ -93,6 +94,10 @@ public:
 	{
 		return *dynamic_cast<Leaf*>(nextList.front());
 	}
+	Leaf operator->()
+	{
+		return *dynamic_cast<Leaf*>(nextList.front());
+	}
 	IteratorComposit operator++()
 	{
 		nextList.pop();
@@ -105,6 +110,8 @@ public:
 	}
 	friend bool operator!=(const IteratorComposit left, const IteratorComposit right)
 	{
+		if (!left.nextList.empty() && !left.nextList.empty()) return true;
+		if (!left.nextList.empty() || !left.nextList.empty()) return false;
 		return !(left != right);
 	}
 private:
