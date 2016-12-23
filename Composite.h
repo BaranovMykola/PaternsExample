@@ -7,18 +7,16 @@
 
 using namespace std;
 class Composit;
-class Iterator;
+class IteratorComposit;
 
 class AbstractInterface
 {
 public:
-	friend class Iterator;
+	friend class IteratorComposit;
 	friend class Composit;
 	virtual void show()const = 0;
 	virtual void add() {}
 	virtual ~AbstractInterface() = default;
-	virtual Iterator begin()const = 0;
-	virtual Iterator end() = 0;
 private:
 	Composit* up;
 };
@@ -26,7 +24,7 @@ private:
 class Composit : public AbstractInterface
 {
 public:
-	friend class Iterator;
+	friend class IteratorComposit;
 	Composit(string category) : mCategory(category) {}
 	~Composit() {}
 	void add(unique_ptr<AbstractInterface> child)
@@ -43,14 +41,6 @@ public:
 		}
 		cout << '}' << endl;
 	}
-	Iterator begin()const
-	{
-		return Iterator(this);
-	}
-	Iterator end()
-	{
-		return Iterator(nullptr);
-	}
 private:
 	vector<unique_ptr<AbstractInterface>> lst;
 	string mCategory;
@@ -65,22 +55,14 @@ public:
 	{
 		cout << mName << endl;
 	}
-	Iterator begin()const
-	{
-		return Iterator(nullptr);
-	}
-	Iterator end()
-	{
-		return Iterator(nullptr);
-	}
 private:
 	string mName;
 };
 
-class Iterator
+class IteratorComposit
 {
 public:
-	Iterator(Composit* root)
+	IteratorComposit(Composit* root)
 	{
 		if (root != nullptr)
 		{
@@ -111,18 +93,20 @@ public:
 	{
 		return *dynamic_cast<Leaf*>(nextList.front());
 	}
-	Iterator operator++()
+	IteratorComposit operator++()
 	{
 		nextList.pop();
 		operateFirst();
 		return *this;
 	}
-	friend bool operator==(const Iterator left, const Iterator right)
+	friend bool operator==(const IteratorComposit left, const IteratorComposit right)
 	{
 		return left.nextList.front() == right.nextList.front();
+	}
+	friend bool operator!=(const IteratorComposit left, const IteratorComposit right)
+	{
+		return !(left != right);
 	}
 private:
 	queue<AbstractInterface*> nextList;
 };
-
-
