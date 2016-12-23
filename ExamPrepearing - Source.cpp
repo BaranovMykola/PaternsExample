@@ -7,6 +7,7 @@
 #include "Adapter.h"
 #include "Facade.h"
 #include "Decorator.h"
+#include "Bridge.h"
 
 using namespace std;
 
@@ -30,6 +31,10 @@ void main()
 	split("Decorator");
 	Stars decor(&b);
 	decor.showBuns();
+	
+	split("Bride");
+	SqureField sqrt(&b);
+	sqrt.square();
 
 	system("pause");
 }
