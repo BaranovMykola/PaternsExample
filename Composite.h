@@ -70,7 +70,6 @@ public:
 		auto vectorIterator = find_if(parrent->getLst().begin(), parrent->getLst().end(), [&](unique_ptr<AbstractInterface>& val) { 
 			return val.get() == this;
 		});
-		vectorIterator->release();
 		parrent->getLst().erase(vectorIterator);
 	}
 	string name()const { return mName; }

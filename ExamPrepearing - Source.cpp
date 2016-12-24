@@ -65,6 +65,8 @@ void main()
 		++it;
 		auto t = *it;
 		(*it).erase();
+		cout << endl;
+		main->show();
 
 		split("State");
 		vector<TraficLight> lights;
