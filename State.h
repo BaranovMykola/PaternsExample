@@ -52,6 +52,15 @@ public:
 	{
 		mCurrentState = new RedState;
 	}
+	TraficLight(const TraficLight& copy):
+		mName(copy.mName)
+	{
+		mCurrentState = new RedState;
+		if (copy.allow())
+		{
+			update();
+		}
+	}
 	~TraficLight() { delete mCurrentState; }
 	bool allow()const
 	{
@@ -60,6 +69,17 @@ public:
 	void update()
 	{
 		mCurrentState->getNext(*this);
+	}
+	string name()const { return mName; }
+	TraficLight operator=(const TraficLight& copy)
+	{
+		delete mCurrentState;
+		mCurrentState = new RedState;
+		if (copy.allow())
+		{
+			update();
+		}
+		return *this;
 	}
 private:
 	string mName;

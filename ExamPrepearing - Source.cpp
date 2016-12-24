@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iterator>
 #include <iomanip>
+#include <fstream>
+#include <ctime>
 
 #include "Adapter.h"
 #include "Facade.h"
@@ -10,6 +12,7 @@
 #include "Bridge.h"
 #include "Composite.h"
 #include "State.h"
+#include "Flyweight.h"
 
 using namespace std;
 
@@ -63,20 +66,54 @@ void main()
 		(*it).show();
 
 		split("State");
-		TraficLight light("Street21");
-		for (int i = 0;i < 6;++i)
+		vector<TraficLight> lights;
+		ifstream file("lights.txt");
+		do
 		{
-			bool let = light.allow();
-			if (let)
+			string in;
+			file >> in;
+			lights.emplace_back(in);
+		}
+		while(!file.eof());
+		srand(time(0));
+		for (TraficLight& i : lights)
+		{
+			if (rand() % 2)
 			{
-				cout << "Green. Go!" << endl;
+				i.update();
+			}
+		}
+		stable_sort(lights.begin(), lights.end(), [](TraficLight l, TraficLight r) { return r.allow() < l.allow() || !(r.allow() < l.allow()) && r.name() < r.name(); });
+		for (auto i : lights)
+		{
+			cout << i.name() << "\t";
+			if (i.allow())
+			{
+				cout << "Green";
 			}
 			else
 			{
-				cout << "Red. Stop!" << endl;
+				cout << "Red";
 			}
-			light.update();
+			cout << endl;
 		}
+		split("Flyweight");
+		Text text("I love Olya");
+		Horizontal* space = new Horizontal(1);
+		Vertical* spaceV = new Vertical(3);
+		Horizontal* spaceB = new Horizontal(5);
+		text.setFont(space);
+		text.draw();
+		cout << endl;
+		text.setFont(spaceV);
+		text.draw();
+		cout << endl;
+		text.setFont(spaceB);
+		text.draw();
+		cout << endl;
+		delete space;
+		delete spaceV;
+		delete spaceB;
 
 	}
 	_CrtMemCheckpoint(&state2);
