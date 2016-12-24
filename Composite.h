@@ -8,29 +8,29 @@
 #include <algorithm>
 
 using namespace std;
-class Composit;
-class IteratorComposit;
+class Composite;
+class IteratorComposite;
 
 class AbstractInterface
 {
 public:
-	friend class IteratorComposit;
-	friend class Composit;
+	friend class IteratorComposite;
+	friend class Composite;
 	virtual void show()const = 0;
 	virtual void add() {}
 	virtual void erase() = 0;
 	virtual ~AbstractInterface() = default;
 	virtual vector<unique_ptr<AbstractInterface>>& getLst() = 0;
 protected:
-	Composit* up;
+	Composite* up;
 };
 
-class Composit : public AbstractInterface
+class Composite : public AbstractInterface
 {
 public:
-	friend class IteratorComposit;
-	Composit(string category) : mCategory(category) {}
-	~Composit() {}
+	friend class IteratorComposite;
+	Composite(string category) : mCategory(category) {}
+	~Composite() {}
 	void add(unique_ptr<AbstractInterface> child)
 	{
 		lst.push_back(move(child));
@@ -81,10 +81,10 @@ private:
 	string mName;
 };
 
-class IteratorComposit : public iterator<input_iterator_tag, Leaf>
+class IteratorComposite : public iterator<input_iterator_tag, Leaf>
 {
 public:
-	IteratorComposit(Composit* root)
+	IteratorComposite(Composite* root)
 	{
 		if (root != nullptr)
 		{
@@ -102,10 +102,10 @@ public:
 		{
 			while (typeid(*nextList.front()) != typeid(Leaf))
 			{
-				Composit* subComposit = dynamic_cast<Composit*>(nextList.front());
-				for (int i = 0;i < subComposit->lst.size();++i)
+				Composite* subComposite = dynamic_cast<Composite*>(nextList.front());
+				for (int i = 0;i < subComposite->lst.size();++i)
 				{
-					nextList.push(subComposit->lst[i].get());
+					nextList.push(subComposite->lst[i].get());
 				}
 				nextList.pop();
 			}
@@ -119,17 +119,17 @@ public:
 	{
 		return *dynamic_cast<Leaf*>(nextList.front());
 	}
-	IteratorComposit operator++()
+	IteratorComposite operator++()
 	{
 		nextList.pop();
 		operateFirst();
 		return *this;
 	}
-	friend bool operator==(const IteratorComposit left, const IteratorComposit right)
+	friend bool operator==(const IteratorComposite left, const IteratorComposite right)
 	{
 		return left.nextList.front() == right.nextList.front();
 	}
-	friend bool operator!=(const IteratorComposit left, const IteratorComposit right)
+	friend bool operator!=(const IteratorComposite left, const IteratorComposite right)
 	{
 		if (!left.nextList.empty() && !left.nextList.empty()) return true;
 		if (!left.nextList.empty() || !left.nextList.empty()) return false;

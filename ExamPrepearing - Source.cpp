@@ -13,9 +13,9 @@
 #include "Composite.h"
 #include "State.h"
 #include "Flyweight.h"
+#include "AbstractFactory.h"
 
 using namespace std;
-
 void split(char* _ch)
 {
 	cout << endl << endl;
@@ -43,15 +43,15 @@ void main()
 		split("Bride");
 		SqureField sqrt(&b);
 		sqrt.square();
-		split("Composit");
-		unique_ptr<Composit> main = make_unique<Composit>("MAIN");
-		auto sub1 = make_unique<Composit>("SUB1");
+		split("Composite");
+		unique_ptr<Composite> main = make_unique<Composite>("MAIN");
+		auto sub1 = make_unique<Composite>("SUB1");
 		sub1->add(move(make_unique<Leaf>("sub11")));
 		sub1->add(move(make_unique<Leaf>("sub12")));
-		auto sub2 = make_unique<Composit>("SUB2");
+		auto sub2 = make_unique<Composite>("SUB2");
 		sub2->add(move(make_unique<Leaf>("sub21")));
 		sub2->add(move(make_unique<Leaf>("sub22")));
-		auto sub21 = make_unique<Composit>("SUB21");
+		auto sub21 = make_unique<Composite>("SUB21");
 		sub21->add(move(make_unique<Leaf>("sub221")));
 		sub21->add(move(make_unique<Leaf>("sub222")));
 		sub2->add(move(sub21));
@@ -60,7 +60,7 @@ void main()
 		main->show();
 		cout << endl;
 
-		auto it = find_if(IteratorComposit(main.get()), IteratorComposit(nullptr), [](Leaf val) { return val.name() == "sub21"; });
+		auto it = find_if(IteratorComposite(main.get()), IteratorComposite(nullptr), [](Leaf val) { return val.name() == "sub21"; });
 		(*it).show();
 		++it;
 		auto t = *it;
@@ -117,7 +117,25 @@ void main()
 		delete space;
 		delete spaceV;
 		delete spaceB;
-
+		split("Abstract Factory");
+		AbstractFactory* factory;
+		factory = new LinuxFactory;
+		try
+		{
+			auto LinuxButton = factory->createLinux(false);
+			LinuxButton->show();
+			auto LinuxMemo = factory->createLinux(true);
+			LinuxMemo->show();
+			auto WinBut = factory->createWindows(false);
+			WinBut->display();
+			auto WinMemo = factory->createWindows(true);
+			WinMemo->display();
+		}
+		catch (char* error)
+		{
+			cout << "Error: " << error << endl;
+		}
+		delete factory;
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))
