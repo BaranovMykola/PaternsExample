@@ -1,0 +1,28 @@
+{
+Country
+{
+Ukraine
+{
+LvivRegion
+CityL1 5465
+CityL2 48
+CityL3 153
+}
+{
+StriyRegions
+CityS1 560
+CityS2 1562
+CityS3 156
+}
+}
+{
+Gonduras
+{
+UnknownRegion
+CityU1 4562
+CityU2 1697
+CityU3 148
+}
+}
+Vatican 1
+}
