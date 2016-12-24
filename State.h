@@ -9,10 +9,6 @@ class TraficLight;
 class GreenState;
 class RedState;
 
-/*inline GreenState* getGreen();
-inline RedState* getRed();*/
-
-
 class TraficLight
 {
 public:

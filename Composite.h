@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <queue>
+#include <iterator>
+#include <algorithm>
 
 using namespace std;
 class Composit;
@@ -16,8 +18,10 @@ public:
 	friend class Composit;
 	virtual void show()const = 0;
 	virtual void add() {}
+	virtual void erase() = 0;
 	virtual ~AbstractInterface() = default;
-private:
+	virtual vector<unique_ptr<AbstractInterface>>& getLst() = 0;
+protected:
 	Composit* up;
 };
 
@@ -29,7 +33,7 @@ public:
 	~Composit() {}
 	void add(unique_ptr<AbstractInterface> child)
 	{
-		lst.push_back(std::move(child));
+		lst.push_back(move(child));
 		lst.back()->up = this;
 	}
 	void show()const
@@ -41,6 +45,11 @@ public:
 		}
 		cout << '}' << endl;
 	}
+	vector<unique_ptr<AbstractInterface>>& getLst()
+	{
+		return lst;
+	}
+	void erase() {}
 private:
 	vector<unique_ptr<AbstractInterface>> lst;
 	string mCategory;
@@ -55,7 +64,20 @@ public:
 	{
 		cout << mName << endl;
 	}
+	void erase()
+	{
+		auto parrent = up;
+		auto vectorIterator = find_if(parrent->getLst().begin(), parrent->getLst().end(), [&](unique_ptr<AbstractInterface>& val) { 
+			return val.get() == this;
+		});
+		vectorIterator->release();
+		parrent->getLst().erase(vectorIterator);
+	}
 	string name()const { return mName; }
+	vector<unique_ptr<AbstractInterface>>& getLst()
+	{
+		return vector<unique_ptr<AbstractInterface>>();
+	}
 private:
 	string mName;
 };
@@ -90,7 +112,7 @@ public:
 			}
 		}
 	}
-	Leaf operator*()
+	Leaf& operator*()
 	{
 		return *dynamic_cast<Leaf*>(nextList.front());
 	}

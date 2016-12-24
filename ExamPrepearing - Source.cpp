@@ -63,7 +63,8 @@ void main()
 		auto it = find_if(IteratorComposit(main.get()), IteratorComposit(nullptr), [](Leaf val) { return val.name() == "sub21"; });
 		(*it).show();
 		++it;
-		(*it).show();
+		auto t = *it;
+		(*it).erase();
 
 		split("State");
 		vector<TraficLight> lights;
