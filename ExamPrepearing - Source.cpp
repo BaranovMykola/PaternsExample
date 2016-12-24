@@ -24,6 +24,49 @@ void split(char* _ch)
 	cout << endl;
 }
 
+bool isBegin(string str) {	return str == "{"; }
+bool isEnd(string str) { return str == "}"; }
+pair<string, string> split(string str)
+{
+	auto result = make_pair(string(), string());
+	auto space = find(str.begin(), str.end(), ' ');
+	copy(str.begin(), space, back_inserter(result.first));
+	copy(++space, str.end(), back_inserter(result.second));
+	return result;
+}
+
+unique_ptr<Composite> readTreeStruct(unique_ptr<Composite> subRoot, ifstream& stream)
+{
+	string line;
+	string musor;
+	getline(stream, line);
+	while(!isEnd(line))
+	{
+		if (isBegin(line))
+		{
+			getline(stream, line);
+			auto newSubRoot = make_unique<Composite>(line);
+			subRoot->add(readTreeStruct(move(newSubRoot), stream));
+			getline(stream, line);
+			if(!stream)
+			{
+				break;
+			}
+			continue;
+		}
+		auto args = split(line);
+		subRoot->add(make_unique<Leaf>(args.first, stoi(args.second)));
+		getline(stream, line);
+	}
+	return move(subRoot);
+}
+
+unique_ptr<Composite> startRead(ifstream& stream)
+{
+	auto root = make_unique<Composite>("ROOT");
+	return readTreeStruct(move(root), stream);
+}
+
 void main()
 {
 	_CrtMemState state1, state2, state3;
@@ -60,6 +103,7 @@ void main()
 		main->show();
 		cout << endl;
 
+		
 		auto it = find_if(IteratorComposite(main.get()), IteratorComposite(nullptr), [](Leaf val) { return val.name() == "sub21"; });
 		(*it).show();
 		++it;
@@ -67,7 +111,14 @@ void main()
 		(*it).erase();
 		cout << endl;
 		main->show();
-
+		auto root = make_unique<Composite>("ROOT");
+		ifstream compFile("compositeRead.txt");
+		auto tree = startRead(compFile);
+		tree->show();
+		(*find_if(IteratorComposite(tree.get()), IteratorComposite(nullptr), [](Leaf& val) { return val.name() == "CityL2"; })).erase();
+		cout << endl;
+		tree->show();
+			
 		split("State");
 		vector<TraficLight> lights;
 		ifstream file("lights.txt");
@@ -117,6 +168,7 @@ void main()
 		delete space;
 		delete spaceV;
 		delete spaceB;
+
 		split("Abstract Factory");
 		AbstractFactory* factory;
 		factory = new LinuxFactory;

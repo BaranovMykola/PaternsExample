@@ -58,11 +58,11 @@ private:
 class Leaf : public AbstractInterface
 {
 public:
-	Leaf(string name) : mName(name) {}
+	Leaf(string name, int quantity=0) : mName(name), mQuanity(quantity) {}
 	~Leaf() {}
 	void show()const
 	{
-		cout << mName << endl;
+		cout << mName << " - " << mQuanity << endl;
 	}
 	void erase()
 	{
@@ -73,12 +73,14 @@ public:
 		parrent->getLst().erase(vectorIterator);
 	}
 	string name()const { return mName; }
+	int quantity()const { return mQuanity; }
 	vector<unique_ptr<AbstractInterface>>& getLst()
 	{
 		return vector<unique_ptr<AbstractInterface>>();
 	}
 private:
 	string mName;
+	int mQuanity;
 };
 
 class IteratorComposite : public iterator<input_iterator_tag, Leaf>
