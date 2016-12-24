@@ -66,7 +66,15 @@ void main()
 		TraficLight light("Street21");
 		for (int i = 0;i < 6;++i)
 		{
-			cout << light.allow() << endl;
+			bool let = light.allow();
+			if (let)
+			{
+				cout << "Green. Go!" << endl;
+			}
+			else
+			{
+				cout << "Red. Stop!" << endl;
+			}
 			light.update();
 		}
 

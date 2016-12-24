@@ -9,25 +9,50 @@ class TraficLight;
 class GreenState;
 class RedState;
 
-inline GreenState* getGreen();
-inline RedState* getRed();
+/*inline GreenState* getGreen();
+inline RedState* getRed();*/
 
-class AbstractState
-{
-public:
-	virtual bool allow()const = 0;
-	virtual void getNext(TraficLight& state) = 0;
-};
 
 class TraficLight
 {
 public:
 	friend class RedState;
 	friend class GreenState;
+	class AbstractState
+	{
+	public:
+		virtual bool allow()const = 0;
+		virtual void getNext(TraficLight& state) = 0;
+	};
+
+	class RedState : public	 AbstractState
+	{
+	public:
+		bool allow()const { return false; }
+		void getNext(TraficLight& obj)
+		{
+			obj.mCurrentState = new GreenState;
+			delete this;
+		};
+	};
+
+	class GreenState : public AbstractState
+	{
+	public:
+		bool allow()const { return true; }
+		void getNext(TraficLight& obj)
+		{
+			obj.mCurrentState = new RedState;
+			delete this;
+
+		}
+	};
 	TraficLight() = default;
 	TraficLight(string name) : mName(name) 
 	{
+		mCurrentState = new RedState;
 	}
+	~TraficLight() { delete mCurrentState; }
 	bool allow()const
 	{
 		return mCurrentState->allow();
@@ -41,29 +66,6 @@ private:
 	AbstractState* mCurrentState;
 };
 
-class RedState : public	 AbstractState
-{
-public:
-	bool allow()const { return false; }
-	void getNext(TraficLight& obj)
-	{
-		obj.mCurrentState = new GreenState;
-		delete this;
-	};
-};
+//inline GreenState* getGreen() { return new GreenState; }
 
-class GreenState : public AbstractState
-{
-public:
-	bool allow()const { return true; }
-	void getNext(TraficLight& obj)
-	{
-		obj.mCurrentState = new RedState;
-		delete this;
-
-	}
-};
-
-inline GreenState* getGreen() { return new GreenState; }
-
-inline RedState* getRed() { return new RedState; }
+//inline RedState* getRed() { return new RedState; }
