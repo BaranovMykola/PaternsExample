@@ -23,4 +23,4 @@ public:
 		std::cout << real << " i(" << imaginary << ')';
 
 	}
-};
+};	

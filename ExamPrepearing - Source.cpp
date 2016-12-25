@@ -17,6 +17,8 @@
 #include "AbstractFactory.h"
 #include "Visitor.h"
 #include "Singelton.h"
+#include "Strategy.h"
+#include "ChainOfResponsibility.h"
 
 using namespace std;
 
@@ -26,6 +28,15 @@ public:
 	bool operator()(const Leaf& l, const Leaf& r)
 	{
 		return l.name() < r.name();
+	}
+};
+
+class DoNotComp
+{
+public:
+	bool operator()(const char& l, const char& r)
+	{
+		return false;
 	}
 };
 
@@ -273,7 +284,61 @@ void main()
 		p1->set(10);
 		cout << "Check value of both singelton objects" << endl;
 		cout << p1->get() << " " << p2->get() << endl;
-//		cout << sReference->get() << " " << s->get() << endl;
+		delete p1;
+
+		split("Strategy");
+		To2Strategy to2;
+		To5Strategy to5;
+		Arithmetic arithmetic;
+		arithmetic.setRules(&to2);
+		cout << arithmetic.operate(10) << endl;
+		arithmetic.setRules(&to5);
+		cout << arithmetic.operate(10) << endl;
+
+		split("Repeat algorithm");
+		vector<int> vec = { 1,1,2,1 };
+		for (auto i = vec.begin();i != vec.end();)
+		{
+			if (find(vec.begin(), i, *i) != i)
+			{
+				i = vec.erase(i);
+			}
+			else
+			{
+				++i;
+			}
+		}
+		for (auto i : vec)
+		{
+			cout << i << " ";
+		}
+		
+		split("Chain of Responsibility");
+		HandlerZero z(0);
+		HandlerR r(&z);
+		HandlerC c(&r);
+		c.handle(&C(1, 2));
+
+		split("Set task");
+		char* speech = "MrrrrrZra";
+		set<char> sp;
+		for (int i = 0;i < strlen(speech);++i)
+		{
+			sp.insert(speech[i]);
+		}
+		for (auto i : sp)
+		{
+			cout << i << " ";
+		}
+		set<char> d;
+		set<char> res;
+		d.insert('r');
+		set_difference(sp.begin(), sp.end(), d.begin(), d.end(), inserter(res, res.end()));
+		cout << endl;
+		for (auto i : res)
+		{
+			cout << i;
+		}
 
 	}
 	_CrtMemCheckpoint(&state2);
