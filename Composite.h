@@ -18,11 +18,13 @@ public:
 	friend class Composite;
 	virtual void show()const = 0;
 	virtual void add() {}
-	virtual void erase(bool = false) = 0;
+	virtual void erase() = 0;
 	virtual ~AbstractInterface() = default;
 	virtual vector<unique_ptr<AbstractInterface>>& getLst() = 0;
 protected:
 	Composite* up;
+private:
+	virtual void _erase() = 0;
 };
 
 class Composite : public AbstractInterface
@@ -50,22 +52,9 @@ public:
 	{
 		return lst;
 	}
-	void erase(bool recursion = false) 
+	void erase() 
 	{
-		for (unique_ptr<AbstractInterface>& i : lst)
-		{
-			if (typeid(*(i.get())) != typeid(Composite))
-			{
-				//cout << (typeid(i.get())).name() << endl;
-				i.reset();
-			}
-			else
-			{
-				i->erase(true);
-			}
-		}
-		if (!recursion)
-		{
+		_erase();
 			if (up != nullptr)
 			{
 				auto parrent = up;
@@ -79,9 +68,23 @@ public:
 			{
 				delete this;
 			}
-		}
 	}
 private:
+	void _erase()
+	{	//recursion erases componen without removing it from parrent
+		for (unique_ptr<AbstractInterface>& i : lst)
+		{
+			if (typeid(*(i.get())) != typeid(Composite))
+			{
+				//cout << (typeid(i.get())).name() << endl;
+				i.reset();
+			}
+			else
+			{
+				i->_erase();
+			}
+		}
+	}
 	vector<unique_ptr<AbstractInterface>> lst;
 	string mCategory;
 };
@@ -95,7 +98,7 @@ public:
 	{
 		cout << mName << " - " << mQuanity << endl;
 	}
-	void erase(bool = false)
+	void erase()
 	{
 		auto parrent = up;
 		auto vectorIterator = find_if(parrent->getLst().begin(), parrent->getLst().end(), [&](unique_ptr<AbstractInterface>& val) { 
@@ -110,6 +113,7 @@ public:
 		return vector<unique_ptr<AbstractInterface>>();
 	}
 private:
+	void _erase() {}
 	string mName;
 	int mQuanity;
 };

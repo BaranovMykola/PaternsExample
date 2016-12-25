@@ -111,7 +111,7 @@ void main()
 		(*it).erase();
 		cout << endl;
 		main->show();
-		main.get()->erase();
+		main.get()->getLst()[0]->erase();
 		cout << endl;
 		main->show();
 		auto root = make_unique<Composite>("ROOT");
