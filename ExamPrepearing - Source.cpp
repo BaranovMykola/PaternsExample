@@ -14,6 +14,7 @@
 #include "State.h"
 #include "Flyweight.h"
 #include "AbstractFactory.h"
+#include "Visitor.h"
 
 using namespace std;
 void split(char* _ch)
@@ -191,6 +192,11 @@ void main()
 			cout << "Error: " << error << endl;
 		}
 		delete factory;
+
+		split("Visitor for composite");
+
+		ConsolePrintVisitor visitor;
+		tree->apply(&visitor);
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))

@@ -7,9 +7,24 @@
 #include <iterator>
 #include <algorithm>
 
+#include "Visitor.h"
+
 using namespace std;
 class Composite;
 class IteratorComposite;
+
+class Composite;
+class Leaf;
+
+class AbstractVisitor
+{
+public:
+	virtual void visit(const Leaf&)const = 0;
+	virtual void visit(Composite&)const = 0;
+};
+
+
+
 
 class AbstractInterface
 {
@@ -21,6 +36,7 @@ public:
 	virtual void erase() = 0;
 	virtual ~AbstractInterface() = default;
 	virtual vector<unique_ptr<AbstractInterface>>& getLst() = 0;
+	virtual void apply(AbstractVisitor*) = 0;
 protected:
 	Composite* up;
 private:
@@ -69,6 +85,10 @@ public:
 				delete this;
 			}
 	}
+	void apply(AbstractVisitor* v)
+	{
+		v->visit(*this);
+	}
 private:
 	void _erase()
 	{	//recursion erases componen without removing it from parrent
@@ -112,10 +132,40 @@ public:
 	{
 		return vector<unique_ptr<AbstractInterface>>();
 	}
+	void apply(AbstractVisitor* v)
+	{
+		v->visit(*this);
+	}
 private:
 	void _erase() {}
 	string mName;
 	int mQuanity;
+};
+
+class ConsolePrintVisitor : public AbstractVisitor
+{
+public:
+	void visit(const Leaf& obj)const
+	{
+		cout << obj.name() << " - " << obj.quantity() << endl;
+	}
+	void visit(Composite& obj)const
+	{
+		for (unique_ptr<AbstractInterface>& i : obj.getLst())
+		{
+			AbstractInterface* n = i.get();
+			Leaf* a = dynamic_cast<Leaf*>(n);
+			Composite* b = dynamic_cast<Composite*>(n);
+			if (a != nullptr)
+			{
+				visit(*a);
+			}
+			else
+			{
+				visit(*b);
+			}
+		}
+	}
 };
 
 class IteratorComposite : public iterator<input_iterator_tag, Leaf>
@@ -174,4 +224,5 @@ public:
 	}
 private:
 	queue<AbstractInterface*> nextList;
+
 };
