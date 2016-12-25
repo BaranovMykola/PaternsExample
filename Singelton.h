@@ -1,18 +1,24 @@
 #pragma once
 
-class Singelton
+class Singelon
 {
 public:
-	~Singelton() = default;
-	static Singelton* getObject()
+	Singelon(const Singelon&) = delete;
+	Singelon& operator=(const Singelon&) = delete;
+	static	Singelon*  getObject()
 	{
-		return unqieObject;
+		if (uniqueObject == nullptr)
+		{
+			uniqueObject = new Singelon(0);
+		}
+		return uniqueObject;
 	}
+	void set(int data) { mData = data; }
+	int get()const { return mData; }
 private:
-	Singelton(int value) : data(value) {}
-	static Singelton* unqieObject;
-	int data;
+	Singelon(int data) : mData(data) 
+	{
+	}
+	static Singelon* uniqueObject;
+	int mData;
 };
-
-
-Singelton* Singelton::unqieObject = p;

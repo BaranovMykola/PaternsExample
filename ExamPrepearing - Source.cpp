@@ -80,6 +80,30 @@ unique_ptr<Composite> startRead(ifstream& stream)
 	return readTreeStruct(move(root), stream);
 }
 
+
+
+//class Singleton
+//{
+//public:
+//	static Singleton* getInstance()
+//	{
+//		if (!single)
+//		{
+//			single = new Singleton(0);
+//		}
+//			return single;
+//	}
+//	void method(){ cout << "data: " << mData << endl; }
+//	void set(int data) { mData = data; }
+//	~Singleton(){}
+//private:
+//	int mData;
+//	static Singleton *single;
+//	Singleton(int data) : mData(data) {}
+//};
+
+Singelon* Singelon::uniqueObject = nullptr;
+
 void main()
 {
 	_CrtMemState state1, state2, state3;
@@ -242,6 +266,15 @@ void main()
 		adapter.mult();
 
 		split("Singleton");
+		Singelon* p1 = Singelon::getObject();
+		Singelon* p2 = Singelon::getObject();
+		cout << p1->get() << " " << p2->get() << endl;
+		cout << "Set data to 10" << endl;
+		p1->set(10);
+		cout << "Check value of both singelton objects" << endl;
+		cout << p1->get() << " " << p2->get() << endl;
+//		cout << sReference->get() << " " << s->get() << endl;
+
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))
