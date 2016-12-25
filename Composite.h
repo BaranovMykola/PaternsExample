@@ -19,8 +19,8 @@ class Leaf;
 class AbstractVisitor
 {
 public:
-	virtual void visit(const Leaf&)const = 0;
-	virtual void visit(Composite&)const = 0;
+	virtual void visit(const Leaf&) = 0;
+	virtual void visit(Composite&) = 0;
 };
 
 
@@ -145,11 +145,11 @@ private:
 class ConsolePrintVisitor : public AbstractVisitor
 {
 public:
-	void visit(const Leaf& obj)const
+	void visit(const Leaf& obj)
 	{
 		cout << obj.name() << " - " << obj.quantity() << endl;
 	}
-	void visit(Composite& obj)const
+	void visit(Composite& obj)
 	{
 		for (unique_ptr<AbstractInterface>& i : obj.getLst())
 		{
@@ -166,6 +166,36 @@ public:
 			}
 		}
 	}
+};
+
+class LineReadVisitor : public AbstractVisitor
+{
+public:
+	LineReadVisitor() {}
+	void visit(const Leaf& obj)
+	{
+		line.push_back(obj);
+	}
+	void visit(Composite& obj)
+	{
+		for (unique_ptr<AbstractInterface>& i : obj.getLst())
+		{
+			AbstractInterface* n = i.get();
+			Leaf* a = dynamic_cast<Leaf*>(n);
+			Composite* b = dynamic_cast<Composite*>(n);
+			if (a != nullptr)
+			{
+				visit(*a);
+			}
+			else
+			{
+				visit(*b);
+			}
+		}
+	}
+	vector<Leaf> get() { return line; }
+private:
+	vector<Leaf> line;
 };
 
 class IteratorComposite : public iterator<input_iterator_tag, Leaf>
@@ -226,3 +256,16 @@ private:
 	queue<AbstractInterface*> nextList;
 
 };
+
+/*
+
+буде листок
+буде композіт
+
+Робимо абвстрактного візітора
+
+Робимо композіт, який працює з нашим абстркантим візітором. 
+
+Робимо конкретного візітора : авбстрактного наслідуваний
+
+*/

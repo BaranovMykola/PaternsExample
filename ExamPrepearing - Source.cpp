@@ -195,8 +195,14 @@ void main()
 
 		split("Visitor for composite");
 
-		ConsolePrintVisitor visitor;
+		LineReadVisitor visitor;
 		tree->apply(&visitor);
+		auto v = visitor.get();
+		sort(v.begin(), v.end(), [](Leaf l, Leaf r) { return l.name() < r.name(); });
+		for (auto i : v)
+		{
+			cout << i.name() << " - " << i.quantity() << endl;
+		}
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))
