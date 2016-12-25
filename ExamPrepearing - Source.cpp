@@ -87,7 +87,7 @@ void main()
 		SqureField sqrt(&b);
 		sqrt.square();
 		split("Composite");
-		unique_ptr<Composite> main = make_unique<Composite>("MAIN");
+		unique_ptr<Composite> main = make_unique<Composite>("MAIN", true);
 		auto sub1 = make_unique<Composite>("SUB1");
 		sub1->add(move(make_unique<Leaf>("sub11")));
 		sub1->add(move(make_unique<Leaf>("sub12")));
@@ -109,6 +109,9 @@ void main()
 		++it;
 		auto t = *it;
 		(*it).erase();
+		cout << endl;
+		main->show();
+		main.get()->erase();
 		cout << endl;
 		main->show();
 		auto root = make_unique<Composite>("ROOT");

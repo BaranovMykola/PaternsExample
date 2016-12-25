@@ -18,7 +18,7 @@ public:
 	friend class Composite;
 	virtual void show()const = 0;
 	virtual void add() {}
-	virtual void erase() = 0;
+	virtual void erase(bool = false) = 0;
 	virtual ~AbstractInterface() = default;
 	virtual vector<unique_ptr<AbstractInterface>>& getLst() = 0;
 protected:
@@ -29,7 +29,8 @@ class Composite : public AbstractInterface
 {
 public:
 	friend class IteratorComposite;
-	Composite(string category) : mCategory(category) {}
+	Composite(string category) : mCategory(category){ }
+	Composite(string category, bool) : mCategory(category) { up = nullptr; }
 	~Composite() {}
 	void add(unique_ptr<AbstractInterface> child)
 	{
@@ -49,7 +50,37 @@ public:
 	{
 		return lst;
 	}
-	void erase() {}
+	void erase(bool recursion = false) 
+	{
+		for (unique_ptr<AbstractInterface>& i : lst)
+		{
+			if (typeid(*(i.get())) != typeid(Composite))
+			{
+				//cout << (typeid(i.get())).name() << endl;
+				i.reset();
+			}
+			else
+			{
+				i->erase(true);
+			}
+		}
+		if (!recursion)
+		{
+			if (up != nullptr)
+			{
+				auto parrent = up;
+				auto vectorIterator = find_if(parrent->getLst().begin(), parrent->getLst().end(), [&](unique_ptr<AbstractInterface>& val)
+				{
+					return val.get() == this;
+				});
+				parrent->getLst().erase(vectorIterator);
+			}
+			else
+			{
+				delete this;
+			}
+		}
+	}
 private:
 	vector<unique_ptr<AbstractInterface>> lst;
 	string mCategory;
@@ -64,7 +95,7 @@ public:
 	{
 		cout << mName << " - " << mQuanity << endl;
 	}
-	void erase()
+	void erase(bool = false)
 	{
 		auto parrent = up;
 		auto vectorIterator = find_if(parrent->getLst().begin(), parrent->getLst().end(), [&](unique_ptr<AbstractInterface>& val) { 
