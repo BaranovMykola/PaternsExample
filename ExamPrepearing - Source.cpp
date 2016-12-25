@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <fstream>
 #include <ctime>
+#include <set>
 
 #include "Adapter.h"
 #include "Facade.h"
@@ -17,6 +18,16 @@
 #include "Visitor.h"
 
 using namespace std;
+
+class Comp
+{
+public:
+	bool operator()(const Leaf& l, const Leaf& r)
+	{
+		return l.name() < r.name();
+	}
+};
+
 void split(char* _ch)
 {
 	cout << endl << endl;
@@ -196,6 +207,7 @@ void main()
 		split("Visitor for composite");
 
 		LineReadVisitor visitor;
+		CountryReadVisitor visitorCountry;
 		tree->apply(&visitor);
 		auto v = visitor.get();
 		sort(v.begin(), v.end(), [](Leaf l, Leaf r) { return l.name() < r.name(); });
@@ -203,6 +215,26 @@ void main()
 		{
 			cout << i.name() << " - " << i.quantity() << endl;
 		}
+		cout << endl;
+		tree->apply(&visitorCountry);
+		auto data = visitorCountry.operate();
+		auto current = data.begin();
+		multimap<string, Leaf>::iterator endRange;
+		do
+		{
+			endRange = data.upper_bound(current->first);
+			cout << current->first << endl;
+			set<Leaf, Comp> echo;
+			for (;current != endRange;++current)
+			{
+				echo.insert(current->second);
+			}
+			for (auto i : echo)
+			{
+				cout << '\t' << i.name() << " - " << i.quantity() << endl;
+			}
+		}
+		while(current != data.end());
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))

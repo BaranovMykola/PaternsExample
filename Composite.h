@@ -6,6 +6,8 @@
 #include <queue>
 #include <iterator>
 #include <algorithm>
+#include <map>
+#include <list>
 
 #include "Visitor.h"
 
@@ -89,6 +91,7 @@ public:
 	{
 		v->visit(*this);
 	}
+	string category()const { return mCategory; }
 private:
 	void _erase()
 	{	//recursion erases componen without removing it from parrent
@@ -196,6 +199,54 @@ public:
 	vector<Leaf> get() { return line; }
 private:
 	vector<Leaf> line;
+};
+
+class CountryReadVisitor : public AbstractVisitor
+{
+public:
+	void visit(const Leaf& obj)
+	{
+		data.insert(make_pair(way, obj));
+	}
+	void visit(Composite& obj)
+	{
+		for (unique_ptr<AbstractInterface>& i : obj.getLst())
+		{
+			AbstractInterface* n = i.get();
+			Leaf* a = dynamic_cast<Leaf*>(n);
+			Composite* b = dynamic_cast<Composite*>(n);
+			way.push_back(obj.category());
+			if (a != nullptr)
+			{
+				visit(*a);
+			}
+			else
+			{
+				visit(*b);
+			}
+			way.pop_back();
+		}
+	}
+	list<string> get() { return way; }
+	multimap<list<string>, Leaf> getData() { return data; }
+	multimap<string, Leaf> operate()
+	{
+		multimap<string, Leaf> result;
+		string f;
+		for (auto i : data)
+		{
+			if (i.first.size() >= 3)
+			{
+				f = *next(i.first.begin(), 2);
+				Leaf s(i.second.name(), i.second.quantity());
+				result.insert(make_pair(f, s));
+			}
+		}
+		return result;
+	}
+private:
+	multimap<list<string>, Leaf> data;
+	list<string> way;
 };
 
 class IteratorComposite : public iterator<input_iterator_tag, Leaf>
