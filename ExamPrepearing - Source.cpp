@@ -16,6 +16,7 @@
 #include "Flyweight.h"
 #include "AbstractFactory.h"
 #include "Visitor.h"
+#include "Singelton.h"
 
 using namespace std;
 
@@ -235,6 +236,12 @@ void main()
 			}
 		}
 		while(current != data.end());
+
+		split("Adapter");	
+		Adapter adapter(&b); // Complex field
+		adapter.mult();
+
+		split("Singleton");
 	}
 	_CrtMemCheckpoint(&state2);
 	if (_CrtMemDifference(&state3, &state1, &state2))
